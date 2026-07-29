@@ -1,0 +1,23 @@
+[package]
+name = "airplay-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+airplay-protocol = { path = "../airplay-protocol" }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+bytes = { workspace = true }
+httparse = { workspace = true }
+mdns-sd = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+tokio = { workspace = true }
+tracing-subscriber = { workspace = true }

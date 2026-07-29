@@ -1,0 +1,29 @@
+[package]
+name = "airplay-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "airplay_cli"
+path = "src/lib.rs"
+
+[[bin]]
+name = "airplay-cli"
+path = "src/main.rs"
+
+[dependencies]
+airplay-server = { path = "../airplay-server" }
+airplay-player = { path = "../airplay-player" }
+airplay-protocol = { path = "../airplay-protocol" }
+eframe = "0.27"
+tray-icon = "0.14"
+image = { version = "0.25", default-features = false, features = ["ico", "png"] }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+async-trait = "0.1"
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

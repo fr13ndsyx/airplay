@@ -1,0 +1,12 @@
+[package]
+name = "fairplay"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+hex = "0.4"

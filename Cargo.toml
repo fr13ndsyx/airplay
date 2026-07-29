@@ -1,0 +1,60 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/fairplay",
+    "crates/airplay-protocol",
+    "crates/airplay-server",
+    "crates/airplay-player",
+    "crates/airplay-cli",
+]
+
+# FairPlay 算法使用 wrapping 算术模拟有符号整数溢出回绕语义。
+# 对 fairplay crate 禁用溢出检查以避免逐行标注 wrapping_*。
+[profile.dev.package.fairplay]
+overflow-checks = false
+
+[profile.test.package.fairplay]
+overflow-checks = false
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["airplay-rs contributors"]
+repository = "https://github.com/your-username/airplay-rs"
+
+[workspace.dependencies]
+# 异步
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["codec"] }
+bytes = "1"
+# 加密
+aes = "0.8"
+ctr = "0.9"
+cbc = "0.1"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+x25519-dalek = { version = "2", features = ["static_secrets"] }
+sha2 = "0.10"
+# 序列化
+plist = "1"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+# 日志
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+thiserror = "1"
+# 网络
+mdns-sd = "0.10"
+httparse = "1.8"
+async-trait = "0.1"
+# GStreamer（Phase 3）
+gstreamer = { version = "0.21", features = ["v1_22"] }
+gstreamer-app = { version = "0.21", features = ["v1_22"] }
+gstreamer-video = { version = "0.21", features = ["v1_22"] }
+glib = "0.18"
+# GUI（Phase 4）
+eframe = "0.27"
+tray-icon = "0.14"
+# 测试
+pretty_assertions = "1"

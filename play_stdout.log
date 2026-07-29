@@ -1,0 +1,7 @@
+[2m2026-07-14T13:35:09.548091Z[0m [32m INFO[0m [2mairplay_player::video_pipeline[0m[2m:[0m 视频管线使用 D3D11 硬件解码
+[2m2026-07-14T13:35:09.553756Z[0m [32m INFO[0m [2mairplay_player::player[0m[2m:[0m GStreamer 线程启动
+[2m2026-07-14T13:35:09.554986Z[0m [32m INFO[0m [2mairplay_server::control::server[0m[2m:[0m control server listening on port 3985
+[2m2026-07-14T13:35:09.555187Z[0m [32m INFO[0m [2mairplay_server::server[0m[2m:[0m control server listening on port 3985
+[2m2026-07-14T13:35:09.560639Z[0m [32m INFO[0m [2mairplay_server::bonjour[0m[2m:[0m mDNS service airplay-rs._airplay._tcp.local. registered on port 3985
+[2m2026-07-14T13:35:09.562974Z[0m [32m INFO[0m [2mairplay_server::bonjour[0m[2m:[0m mDNS service AABBCCDDEEFF@airplay-rs._raop._tcp.local. registered on port 3985
+[2m2026-07-14T13:35:09.563152Z[0m [32m INFO[0m [2mairplay_server::server[0m[2m:[0m bonjour service registered: airplay-rs (port 3985)

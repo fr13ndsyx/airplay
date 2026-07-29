@@ -1,0 +1,20 @@
+[package]
+name = "airplay-player"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+airplay-server = { path = "../airplay-server" }
+airplay-protocol = { path = "../airplay-protocol" }
+gstreamer = { version = "0.21", features = ["v1_22"] }
+gstreamer-app = { version = "0.21", features = ["v1_22"] }
+gstreamer-video = { version = "0.21", features = ["v1_22"] }
+glib = "0.18"
+tokio = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+
+[dev-dependencies]
+tracing-subscriber = { workspace = true }

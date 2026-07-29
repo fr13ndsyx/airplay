@@ -1,0 +1,7 @@
+[2m2026-07-14T13:37:04.020238Z[0m [32m INFO[0m [2mairplay_cli[0m[2m:[0m airplay-cli 启动中...
+[2m2026-07-14T13:37:04.047098Z[0m [32m INFO[0m [2mairplay_player::video_pipeline[0m[2m:[0m GUI 模式：使用软件解码避免 D3D11 context 冲突
+[2m2026-07-14T13:37:04.047314Z[0m [33m WARN[0m [2mairplay_player::video_pipeline[0m[2m:[0m D3D11 视频管线不可用，回退到软解 (avdec_h264 + videoconvert)
+[2m2026-07-14T13:37:04.054614Z[0m [32m INFO[0m [2mairplay_cli[0m[2m:[0m GStreamer 播放器已创建（主线程）
+[2m2026-07-14T13:37:04.054720Z[0m [32m INFO[0m [2mairplay_player::player[0m[2m:[0m GStreamer 线程启动
+[2m2026-07-14T13:37:04.055757Z[0m [32m INFO[0m [2mairplay_cli::server_task[0m[2m:[0m server task 启动
+[2m2026-07-14T13:37:04.261909Z[0m [32m INFO[0m [2mairplay_cli::app[0m[2m:[0m 加载中文字体: msyh (C:\Windows\Fonts\msyh.ttc)

@@ -1,0 +1,6 @@
+# GStreamer MSVC 环境变量（Phase 3）
+# PKG_CONFIG_PATH 指向 GStreamer 的 .pc 文件目录
+# GSTREAMER_1_0_ROOT_MSVC_X86_64 指向 GStreamer 安装根目录
+[env]
+PKG_CONFIG_PATH = "D:\\gstreamer\\1.0\\msvc_x86_64\\lib"
+GSTREAMER_1_0_ROOT_MSVC_X86_64 = "D:\\gstreamer\\1.0\\msvc_x86_64\\"

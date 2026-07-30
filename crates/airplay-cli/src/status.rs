@@ -2,6 +2,11 @@
 //!
 //! 使用 `tokio::sync::watch` 广播服务器状态，
 //! 使用 `tokio::sync::mpsc::unbounded_channel` 传递 UI 命令。
+//!
+//! 纯 CLI 模式下部分类型别名/命令变体（如 `Stop`、`SetVolume`、`StatusRx`、`CmdTx`）
+//! 暂未被 main.rs 直接使用，但保留在库中以供集成测试与未来扩展（如交互式命令）使用。
+
+#![allow(dead_code)]
 
 use tokio::sync::{mpsc, watch};
 

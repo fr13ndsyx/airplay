@@ -2,6 +2,8 @@
 //!
 //! 包装 `GstPlayerConsumer`，在 iPhone 连接/断开时广播 `AppStatus` 给 UI。
 
+#![allow(dead_code)]
+
 use std::sync::atomic::{AtomicU16, Ordering};
 use std::sync::Arc;
 

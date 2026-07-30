@@ -1,71 +1,107 @@
-//! airplay-cli —— egui GUI + 系统托盘的 AirPlay 接收端。
+//! airplay-cli —— 纯命令行 AirPlay 接收端。
 //!
-//! 双击即用的桌面应用：
-//! - 系统托盘常驻，右键菜单控制
-//! - egui 主窗口作为控制面板
-//! - GStreamer 视频独立原生窗口
-//! - 关闭主窗口 → 最小化到托盘
+//! 启动后自动开启 AirPlay 服务，iPhone 即可发现并投屏。
+//! 视频画面由 GStreamer 在独立原生窗口渲染；本进程在控制台输出日志。
+//!
+//! 退出方式：
+//! - 按 Ctrl+C 优雅关闭
+//! - 直接关闭控制台窗口
+//!
+//! 环境变量：
+//! - `RUST_LOG`：日志级别，默认 `info`（如 `RUST_LOG=debug`）
 
-mod app;
 mod server_task;
 mod status;
 mod status_consumer;
-mod tray;
-
-use std::sync::Arc;
 
 use airplay_player::GstPlayer;
-use airplay_server::consumer::AirPlayConsumer;
 use status::AppStatus;
+use tokio::signal;
 use tokio::sync::{mpsc, watch};
 use tracing_subscriber::EnvFilter;
 
-use crate::status_consumer::StatusConsumer;
-
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     // 初始化日志
     tracing_subscriber::fmt()
         .with_env_filter(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info")),
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
         )
         .init();
 
     tracing::info!("airplay-cli 启动中...");
+    println!("==============================");
+    println!("  airplay-rs  (CLI 模式)");
+    println!("==============================");
+    println!("iPhone 操作：");
+    println!("  1. 确保 iPhone 与电脑在同一 Wi-Fi");
+    println!("  2. 打开控制中心 → 屏幕镜像");
+    println!("  3. 选择 'airplay-rs-mirror'");
+    println!("  4. 按 Ctrl+C 退出本程序");
+    println!();
 
     // 在主线程创建 GstPlayer（D3D11 元素需要主线程）
     let player = GstPlayer::new()?;
     tracing::info!("GStreamer 播放器已创建（主线程）");
 
-    // 创建 tokio runtime
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .enable_all()
-        .build()?;
-
     // 创建通道
-    let (status_tx, status_rx) = watch::channel(AppStatus::Stopped);
+    let (status_tx, mut status_rx) = watch::channel(AppStatus::Stopped);
     let (cmd_tx, cmd_rx) = mpsc::unbounded_channel();
 
     // spawn server task（传入主线程创建的 player）
-    runtime.spawn(server_task::run_server(status_tx, cmd_rx, player));
+    tokio::spawn(server_task::run_server(status_tx.clone(), cmd_rx, player));
 
-    // 创建系统托盘（在主线程，Windows 托盘需要主线程消息循环）
-    let _tray = tray::TrayState::new(cmd_tx.clone())?;
+    // 自动启动服务
+    let _ = cmd_tx.send(status::ServerCommand::Start);
 
-    // 运行 eframe（阻塞主线程）
-    let native_options = eframe::NativeOptions::default();
-    eframe::run_native(
-        "airplay-rs",
-        native_options,
-        Box::new(move |cc| -> Box<dyn eframe::App> {
-            Box::new(app::AirPlayApp::new(cc, status_rx, cmd_tx))
-        }),
-    )
-    .map_err(|e| anyhow::anyhow!("eframe 运行失败: {}", e))?;
+    // 监听状态变化，打印到控制台
+    let status_printer = tokio::spawn(async move {
+        let mut last = AppStatus::Stopped;
+        while status_rx.changed().await.is_ok() {
+            let cur = status_rx.borrow().clone();
+            // 仅在状态实际变化时打印
+            let changed = match (&last, &cur) {
+                (AppStatus::Running { port: p1 }, AppStatus::Running { port: p2 }) => p1 != p2,
+                (AppStatus::Disconnected { port: p1 }, AppStatus::Disconnected { port: p2 }) => {
+                    p1 != p2
+                }
+                _ => true,
+            };
+            if changed {
+                print_status(&cur);
+                last = cur;
+            }
+        }
+    });
 
-    // eframe 退出后，发送 Shutdown + 关闭 runtime
-    tracing::info!("eframe 退出，正在关闭...");
-    runtime.shutdown_timeout(std::time::Duration::from_secs(2));
+    // 等待 Ctrl+C
+    match signal::ctrl_c().await {
+        Ok(()) => tracing::info!("收到 Ctrl+C，正在关闭..."),
+        Err(e) => tracing::warn!("无法监听 Ctrl+C: {}", e),
+    }
 
+    // 通知 server task 关闭
+    let _ = cmd_tx.send(status::ServerCommand::Shutdown);
+    // 给 server task 一点时间清理
+    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+    status_printer.abort();
+
+    tracing::info!("airplay-cli 已退出");
     Ok(())
+}
+
+/// 打印当前状态到控制台。
+fn print_status(status: &AppStatus) {
+    match status {
+        AppStatus::Stopped => println!("[状态] 已停止"),
+        AppStatus::Starting => println!("[状态] 启动中..."),
+        AppStatus::Running { port } => {
+            println!("[状态] 等待 iPhone 连接 (端口 {})...", port);
+        }
+        AppStatus::Connected => println!("[状态] iPhone 已连接，正在投屏"),
+        AppStatus::Disconnected { port } => {
+            println!("[状态] iPhone 已断开 (端口 {})", port);
+        }
+        AppStatus::Error(msg) => println!("[状态] 错误: {}", msg),
+    }
 }

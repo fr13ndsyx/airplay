@@ -16,9 +16,6 @@ path = "src/main.rs"
 airplay-server = { path = "../airplay-server" }
 airplay-player = { path = "../airplay-player" }
 airplay-protocol = { path = "../airplay-protocol" }
-eframe = "0.27"
-tray-icon = "0.14"
-image = { version = "0.25", default-features = false, features = ["ico", "png"] }
 tokio = { workspace = true }
 anyhow = { workspace = true }
 tracing = { workspace = true }

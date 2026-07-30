@@ -6,7 +6,7 @@
 //! 注意：不调用 `server.wait_for_shutdown()`（它会阻塞等待 Ctrl+C），
 //! 而是循环 `cmd_rx.recv()` 等待 UI 命令。
 
-use std::sync::atomic::{AtomicU16, Ordering};
+use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
 use airplay_player::GstPlayer;
